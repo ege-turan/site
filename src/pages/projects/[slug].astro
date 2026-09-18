@@ -34,14 +34,14 @@ const { project, html } = Astro.props;
   </header>
 
   {project.cover && (
-    <img class="hero" src={project.cover} alt="" />
+    <img class="hero" src={project.cover} alt="" loading="eager" decoding="async" fetchpriority="high" />
   )}
 
   <section class="prose" set:html={html} />
 
   {project.images?.length > 0 && (
     <section class="gallery">
-      {project.images.map((src) => <img src={src} alt="" loading="lazy" />)}
+      {project.images.map((src) => <img src={src} alt="" loading="lazy" decoding="async" />)}
     </section>
   )}
 </Base>

@@ -24,7 +24,17 @@ const site = await getSettings();
         <a href={site.github} target="_blank" rel="noopener">GitHub</a>
       </nav>
     </div>
-    {site.photo && <img class="avatar" src={site.photo} alt={site.name} />}
+    {site.photo && (
+      <img
+        class="avatar"
+        src={site.photo}
+        alt={site.name}
+        width={site.photoSize}
+        height={site.photoSize}
+        loading="eager"
+        decoding="async"
+      />
+    )}
   </header>
 
   <section id="projects">
@@ -32,7 +42,15 @@ const site = await getSettings();
     {projects.map((p) => (
       <a class="row row--with-image" href={`/projects/${p.slug}`}>
         {p.cover && (
-          <img class="row-thumb" src={p.cover} alt="" loading="lazy" />
+          <img
+            class="row-thumb"
+            src={p.cover}
+            alt=""
+            width={site.thumbWidth}
+            height={site.thumbHeight}
+            loading="lazy"
+            decoding="async"
+          />
         )}
         <div class="row-body">
           <div class="row-top">

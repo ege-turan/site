@@ -61,10 +61,10 @@ export async function getProjects() {
       const endDate = props['End date']?.date?.start ?? null;
       const year = (endDate ?? startDate)?.slice(0, 4) ?? '';
 
-      const cover = await cacheNotionAsset(getFileUrl(page.cover), `project-${page.id}-cover`);
+      const cover = await cacheNotionAsset(getFileUrl(page.cover), `project-${page.id}-cover`, { maxWidth: 1600 });
       const rawImages = (props.Images?.files ?? []).map(getFileUrl).filter(Boolean);
       const images = await Promise.all(
-        rawImages.map((url, i) => cacheNotionAsset(url, `project-${page.id}-img-${i}`))
+        rawImages.map((url, i) => cacheNotionAsset(url, `project-${page.id}-img-${i}`, { maxWidth: 1000 }))
       );
 
       return {
@@ -158,7 +158,7 @@ export async function getSettings() {
   if (!page) return SAMPLE_SETTINGS;
 
   const props = page.properties;
-  const photo = await cacheNotionAsset(getFileUrl(props.Photo?.files?.[0]), 'site-photo');
+  const photo = await cacheNotionAsset(getFileUrl(props.Photo?.files?.[0]), 'site-photo', { maxWidth: 400 });
   const resume = await cacheNotionAsset(getFileUrl(props.Resume?.files?.[0]), 'site-resume');
 
   return {
@@ -194,7 +194,7 @@ async function cacheMarkdownImages(markdown, keyPrefix) {
 
   for (let i = 0; i < matches.length; i++) {
     const url = matches[i][2];
-    const cached = await cacheNotionAsset(url, `${keyPrefix}-img-${i}`);
+    const cached = await cacheNotionAsset(url, `${keyPrefix}-img-${i}`, { maxWidth: 1200 });
     if (cached) result = result.replace(url, cached);
   }
   return result;
