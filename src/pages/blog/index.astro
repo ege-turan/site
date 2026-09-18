@@ -1,0 +1,32 @@
+---
+// Ege Turan
+// September 17, 2026
+// Everything I've written, newest first.
+
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../lib/notion.js';
+
+const posts = await getPosts();
+---
+<Base title="Writing — Ege Turan">
+  <header class="intro">
+    <h1>Writing</h1>
+    <nav class="links">
+      <a href="/">Home</a>
+    </nav>
+  </header>
+
+  <section>
+    {posts.map((post) => (
+      <a class="row" href={`/blog/${post.slug}`}>
+        <div class="row-top">
+          <span class="row-title">{post.title}</span>
+          <span class="row-year">
+            {new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+          </span>
+        </div>
+        {post.description && <p class="row-desc">{post.description}</p>}
+      </a>
+    ))}
+  </section>
+</Base>

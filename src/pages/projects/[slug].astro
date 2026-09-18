@@ -1,0 +1,47 @@
+---
+// Ege Turan
+// September 17, 2026
+// One page per project, built from whatever I wrote in that project's Notion page.
+
+import Base from '../../layouts/Base.astro';
+import { getProjects, getPageHtml } from '../../lib/notion.js';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return Promise.all(
+    projects.map(async (project) => ({
+      params: { slug: project.slug },
+      props: { project, html: await getPageHtml(project.id) },
+    }))
+  );
+}
+
+const { project, html } = Astro.props;
+---
+<Base title={`${project.title} — Ege Turan`} description={project.blurb}>
+  <header class="intro">
+    <h1>{project.title}</h1>
+    <p class="role">
+      {project.year}
+      {project.status === 'In progress' && ' · In progress'}
+    </p>
+    <nav class="links">
+      <a href="/">All projects</a>
+      {project.github && (
+        <a href={project.github} target="_blank" rel="noopener">GitHub ↗</a>
+      )}
+    </nav>
+  </header>
+
+  {project.cover && (
+    <img class="hero" src={project.cover} alt="" />
+  )}
+
+  <section class="prose" set:html={html} />
+
+  {project.images?.length > 0 && (
+    <section class="gallery">
+      {project.images.map((src) => <img src={src} alt="" loading="lazy" />)}
+    </section>
+  )}
+</Base>

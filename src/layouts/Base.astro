@@ -1,0 +1,49 @@
+---
+// Ege Turan
+// September 17, 2026
+// Shared page shell — fonts, the background animation, wraps every page on the site.
+
+import '../styles/global.css';
+import { getSettings } from '../lib/notion.js';
+
+const { title = 'Ege Turan', description = 'Personal projects and notes.' } = Astro.props;
+const settings = await getSettings();
+const cssVars = `--page-width: ${settings.pageWidth}px; --avatar-size: ${settings.photoSize}px; --thumb-width: ${settings.thumbWidth}px; --thumb-height: ${settings.thumbHeight}px;`;
+---
+<!DOCTYPE html>
+<html lang="en" style={cssVars}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:ital,wght@0,400;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,400;1,400&display=swap"
+    rel="stylesheet"
+  />
+  <script>
+    // Randomly pick one of a few font pairings each page load — fully
+    // independent of which background effect gets picked, so any
+    // combination of the two can show up.
+    (function () {
+      var pairs = [
+        { mono: '"IBM Plex Mono"', serif: '"IBM Plex Serif"' },
+        { mono: '"JetBrains Mono"', serif: '"Fraunces"' },
+        { mono: '"Space Mono"', serif: '"Spectral"' },
+      ];
+      var pick = pairs[Math.floor(Math.random() * pairs.length)];
+      document.documentElement.style.setProperty('--font-mono', pick.mono);
+      document.documentElement.style.setProperty('--font-serif', pick.serif);
+    })();
+  </script>
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <slot />
+  </div>
+  <script src="/background.js" defer></script>
+</body>
+</html>

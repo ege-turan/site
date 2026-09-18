@@ -1,0 +1,33 @@
+---
+// Ege Turan
+// September 17, 2026
+// A single post, rendered straight from its Notion page.
+
+import Base from '../../layouts/Base.astro';
+import { getPosts, getPageHtml } from '../../lib/notion.js';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return Promise.all(
+    posts.map(async (post) => ({
+      params: { slug: post.slug },
+      props: { post, html: await getPageHtml(post.id) },
+    }))
+  );
+}
+
+const { post, html } = Astro.props;
+---
+<Base title={`${post.title} — Ege Turan`} description={post.description}>
+  <header class="intro">
+    <h1>{post.title}</h1>
+    <p class="role">
+      {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+    </p>
+    <nav class="links">
+      <a href="/blog">All writing</a>
+    </nav>
+  </header>
+
+  <section class="prose" set:html={html} />
+</Base>

@@ -1,0 +1,71 @@
+---
+// Ege Turan
+// September 17, 2026
+// Homepage — intro, project list, latest posts. All of it pulled from Notion at build time.
+
+import Base from '../layouts/Base.astro';
+import { getProjects, getPosts, getSettings } from '../lib/notion.js';
+
+const projects = await getProjects();
+const posts = (await getPosts()).slice(0, 5);
+const site = await getSettings();
+---
+<Base title={`${site.name} `}>
+  <header class="intro">
+    <div class="intro-text">
+      <h1>{site.name}</h1>
+      <p class="role">{site.role}</p>
+      <p class="bio">{site.bio}</p>
+      <nav class="links">
+        <a href="#projects">Projects</a>
+        <a href="/blog">Writing</a>
+        {site.resume && <a href={site.resume} target="_blank">Resume</a>}
+        <a href={site.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        <a href={site.github} target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+    {site.photo && <img class="avatar" src={site.photo} alt={site.name} />}
+  </header>
+
+  <section id="projects">
+    <h2>{site.projectsSectionTitle}</h2>
+    {projects.map((p) => (
+      <a class="row row--with-image" href={`/projects/${p.slug}`}>
+        {p.cover && (
+          <img class="row-thumb" src={p.cover} alt="" loading="lazy" />
+        )}
+        <div class="row-body">
+          <div class="row-top">
+            <span class="row-title">{p.title}</span>
+            <span class="row-year">{p.year}</span>
+          </div>
+          {p.blurb && <p class="row-desc">{p.blurb}</p>}
+          {p.status === 'In progress' && (
+            <p class="row-tags"><span>In progress</span></p>
+          )}
+        </div>
+      </a>
+    ))}
+  </section>
+
+  {posts.length > 0 && (
+    <section id="writing">
+      <h2>{site.writingSectionTitle}</h2>
+      {posts.map((post) => (
+        <a class="row" href={`/blog/${post.slug}`}>
+          <div class="row-top">
+            <span class="row-title">{post.title}</span>
+            <span class="row-year">
+              {new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+            </span>
+          </div>
+          {post.description && <p class="row-desc">{post.description}</p>}
+        </a>
+      ))}
+    </section>
+  )}
+
+  <footer>
+    egeturan.com — built with Astro, hosted on GitHub Pages, content from Notion.
+  </footer>
+</Base>
